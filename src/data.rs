@@ -62,4 +62,43 @@ impl<T: Clone, U: PartialEq> Series<T, U> {
 }
 
 #[cfg(test)]
-mod test {}
+mod test {
+    use std::iter::zip;
+
+    use super::Series;
+
+    fn equal<T: Clone, U: Clone + PartialEq>(a: &Series<T, U>, b: &Series<T, U>) -> bool
+    where
+        T: PartialEq,
+    {
+        let mut equal = true;
+
+        for (va, vb) in zip(a.data.clone(), b.data.clone()) {
+            if va != vb {
+                equal = false;
+            }
+        }
+
+        for (va, vb) in zip(a.labels.clone(), b.labels.clone()) {
+            if va != vb {
+                equal = false;
+            }
+        }
+
+        equal
+    }
+
+    #[test]
+    fn should_equal() {
+        let a = Series::from_label(&[1, 2, 3], &[1, 2, 3]);
+        let b = Series::from_label(&[1, 2, 3], &[1, 2, 3]);
+
+        assert!(equal(&a, &b));
+    }
+
+    #[test]
+    #[should_panic]
+    fn diffrent_length_of_data_and_label_should_panic() {
+        Series::from_label(&[1, 2, 3], &[1]);
+    }
+}
