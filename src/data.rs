@@ -1,7 +1,7 @@
 use std::{any::type_name, fmt::Display};
 
 #[derive(Debug, Clone)]
-/// One-dimensional array.
+/// One-dimensional array with axis labels.
 pub struct Series<T: Clone, U: PartialEq> {
     data: Vec<T>,
     labels: Vec<U>,
@@ -14,6 +14,24 @@ impl<T: Clone, U: PartialEq> Series<T, U> {
         Series {
             data: v.to_vec(),
             labels: (0..v.len()).collect(),
+        }
+    }
+
+    /// Create new [`Series`] instance with axis labels.
+    ///
+    /// # Panics
+    /// When length of given data and label is not equal, it panics.
+    pub fn from_label(v: &[T], l: &[U]) -> Series<T, U>
+    where
+        U: Clone,
+    {
+        if v.len() != l.len() {
+            panic!("Length of data and label should be equal.");
+        }
+
+        Series {
+            data: v.to_vec(),
+            labels: l.to_vec(),
         }
     }
 
@@ -42,3 +60,6 @@ impl<T: Clone, U: PartialEq> Series<T, U> {
         self.clone()
     }
 }
+
+#[cfg(test)]
+mod test {}
